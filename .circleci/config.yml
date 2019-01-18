@@ -1,0 +1,96 @@
+---
+version: 2
+jobs:
+  build:
+    docker:
+      - image: elixir:1.8-alpine
+
+    working_directory: /opt/app/stochastica
+
+    environment:
+      MIX_ENV: test
+      STOCHASTICA_SECRET_KEY_BASE: STOCHASTICA_SECRET_KEY_BASE
+
+    steps:
+      - checkout
+
+      - run:
+          name: Set up Hex locally
+          command: |
+            mix local.hex --force && mix local.rebar --force
+
+      - run:
+          name: Set mix.lock aside
+          command: cp mix.lock mix.lock.orig
+
+      - restore_cache:
+          keys:
+            - stochastica-{{ checksum "mix.lock.orig" }}
+            - stochastica-{{ .Branch }}
+            - stochastica-master
+
+      - run:
+          name: Download dependencies
+          command: mix deps.get
+
+      - save_cache:
+          key: stochastica-{{ .Branch }}
+          paths:
+            - _build
+            - deps
+
+      - save_cache:
+          key: stochastica-{{ checksum "mix.lock.orig" }}
+          paths:
+            - _build
+            - deps
+
+      - run:
+          name: Run Tests
+          command: mix test
+
+      ## Prod docker image building
+      - restore_cache:
+          keys:
+            - stochastica-prod-{{ checksum "mix.lock.orig" }}
+            - stochastica-prod-{{ .Branch }}
+            - stochastica-prod-master
+
+      - run:
+          name: Compile for prod
+          command: |
+#            MIX_ENV=prod mix compile
+            MIX_ENV=prod mix release && \
+            mix phx.digest
+
+      - run:
+          name: Find release...
+          command: pwd && ls -lhs && cd _build && ls -lsh
+
+      - save_cache:
+          key: stochastica-prod-{{ .Branch }}
+          paths:
+            - _build/prod
+
+      - save_cache:
+          key: stochastica-prod-{{ checksum "mix.lock.orig" }}
+          paths:
+            - _build/prod
+
+      # all steps after this run in the remote environment
+#      - type: setup-docker-engine
+#        reusable: true
+#        version: 17.06.0-ce
+#
+#      - run:
+#          name: Build docker image and publish image tagged with commit
+#          command: |
+#            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#            docker build -t ciroque/$CIRCLE_PROJECT_REPONAME:latest .
+#            docker push ciroque/$CIRCLE_PROJECT_REPONAME:latest
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build:
+        context: org-global
