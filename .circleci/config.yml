@@ -77,16 +77,16 @@ jobs:
             - _build/prod
 
       # all steps after this run in the remote environment
-#      - type: setup-docker-engine
-#        reusable: true
-#        version: 17.06.0-ce
-#
-#      - run:
-#          name: Build docker image and publish image tagged with commit
-#          command: |
-#            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#            docker build -t ciroque/$CIRCLE_PROJECT_REPONAME:latest .
-#            docker push ciroque/$CIRCLE_PROJECT_REPONAME:latest
+      - type: setup-docker-engine
+        reusable: true
+        version: 17.06.0-ce
+
+      - run:
+          name: Build docker image and publish image tagged with commit
+          command: |
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker build -t ciroque/$CIRCLE_PROJECT_REPONAME:latest .
+            docker push ciroque/$CIRCLE_PROJECT_REPONAME:latest
 workflows:
   version: 2
   build:
