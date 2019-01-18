@@ -8,11 +8,7 @@
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
-    <script>
-  (function() {
-    console.log("Page should be loaded...");
-  })();
-  </script>
+    <main id="stochastica"></main>
+    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/index.js") %>"></script>
   </body>
 </html>

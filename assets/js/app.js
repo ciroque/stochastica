@@ -7,7 +7,6 @@ import Content from "./components/content/content";
 
 class App extends Component {
   render() {
-    console.warn("About to render UI...");
     return (
       <BrowserRouter>
         <div className="grid-container" >
