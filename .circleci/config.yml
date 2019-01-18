@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: elixir:1.8-alpine
+      - image: circleci/elixir:1.8-alpine
 
     working_directory: /opt/app/stochastica
 
