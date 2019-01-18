@@ -1,17 +1,23 @@
-// We need to import the CSS so that webpack will load it.
-// The MiniCssExtractPlugin is used to separate it out into
-// its own CSS file.
-import css from "../css/app.css"
+import React, { Component } from 'react';
+import {BrowserRouter} from 'react-router-dom';
+import './App.css';
+import Title from "./components/title/title";
+import Navigation from "./components/navigation/navigation";
+import Content from "./components/content/content";
 
-// webpack automatically bundles all modules in your
-// entry points. Those entry points can be configured
-// in "webpack.config.js".
-//
-// Import dependencies
-//
-import "phoenix_html"
+class App extends Component {
+  render() {
+    console.warn("About to render UI...");
+    return (
+      <BrowserRouter>
+        <div className="grid-container" >
+          <Title/>
+          <Navigation/>
+          <Content/>
+        </div>
+      </BrowserRouter>
+    );
+  }
+}
 
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
+export default App;
