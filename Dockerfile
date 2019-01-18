@@ -6,6 +6,8 @@ WORKDIR /opt/apps/stochastica
 
 COPY _build/prod/rel/stochastica/releases/0.1.0/stochastica.tar.gz .
 
+RUN apk add --no-cache bash
+
 RUN tar zxf stochastica.tar.gz && \
     rm stochastica.tar.gz
 
