@@ -4,6 +4,7 @@ import '../../App.css';
 import Lexemes from "../lexemes/lexemes";
 import Palette from "../palette/palette";
 import XkcdPassword from "../xkcdPassword/xkcdPassword";
+import ListManager from "../kismet/listManager/ListManager";
 
 const Content = (props) => {
     return (
@@ -16,6 +17,10 @@ const Content = (props) => {
                 <Route
                     path="/lexemes"
                     component={Lexemes}
+                />
+                <Route
+                    path="/kismet"
+                    component={ListManager}
                 />
                 <Route
                     path="/"

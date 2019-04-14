@@ -59,7 +59,7 @@ jobs:
       - run:
           name: Compile for prod
           command: |
-            MIX_ENV=prod mix compile
+            MIX_ENV=prod mix compile && mix phx.digest
 #            MIX_ENV=prod mix release && mix phx.digest
 
       - run:
