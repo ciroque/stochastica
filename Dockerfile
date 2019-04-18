@@ -41,6 +41,4 @@ ENV PORT=4000 \
   REPLACE_OS_VARS=true \
   SHELL=/bin/sh
 
-ENTRYPOINT ["/opt/app/stochastica/bin/stochastica"]`
-
-CMD ["foreground"]
+ENTRYPOINT ["sh"]
