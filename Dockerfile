@@ -8,7 +8,7 @@ WORKDIR /opt/app
 
 RUN apk update && \
     apk upgrade --no-cache && \
-    apk add --no-cache build-base git
+    apk add --no-cache build-base git yarn
 
 RUN mix local.rebar --force && \
     mix local.hex --force
@@ -16,6 +16,14 @@ RUN mix local.rebar --force && \
 COPY . .
 
 RUN mix do deps.get, deps.compile, compile
+
+WORKDIR /opt/app/assets
+
+RUN yarn && yarn deploy
+
+WORKDIR /opt/app
+
+RUN mix phx.digest
 
 RUN mkdir -p /opt/app/built && \
     mix release --verbose && \
