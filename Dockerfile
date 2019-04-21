@@ -8,7 +8,7 @@ WORKDIR /opt/app
 
 RUN apk update && \
     apk upgrade --no-cache && \
-    apk add --no-cache build-base
+    apk add --no-cache build-base git
 
 RUN mix local.rebar --force && \
     mix local.hex --force
@@ -21,16 +21,17 @@ RUN mkdir -p /opt/app/built && \
     mix release --verbose && \
     cp _build/prod/rel/stochastica/releases/0.1.0/stochastica.tar.gz /opt/app/built
 
+## Now, build the actual release image
 
-FROM erlang:21-alpine
+FROM alpine:3.9
 
-RUN mkdir -p /opt/apps/stochastica
+RUN apk add --no-cache bash openssl
 
-WORKDIR /opt/apps/stochastica
+RUN mkdir -p /opt/app/stochastica
+
+WORKDIR /opt/app/stochastica
 
 COPY --from=BOB_THE_BUILDER /opt/app/built/stochastica.tar.gz .
-
-RUN apk add --no-cache bash
 
 RUN tar zxf stochastica.tar.gz && \
     rm stochastica.tar.gz
@@ -41,4 +42,5 @@ ENV PORT=4000 \
   REPLACE_OS_VARS=true \
   SHELL=/bin/sh
 
-ENTRYPOINT ["sh"]
+ENTRYPOINT ["/opt/app/stochastica/bin/stochastica"]
+CMD ["foreground"]
