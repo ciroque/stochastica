@@ -5,8 +5,9 @@ html, body {
 
 body {
     background-color: whitesmoke;
-    background-image: url('/img/fifth.png');
-    background-blend-mode: hue;
+    background-image: url('https://hdqwalls.com/download/big-almaty-lake-1920x1080.jpg');
+    /*background-image: url('/img/fifth.png');*/
+    /*background-blend-mode: hue;*/
     background-size: cover;
 }
 
@@ -48,10 +49,10 @@ canvas {
 
 .card {
     background-color: azure;
-    border: cadetblue 4px solid;
+    border: 4px solid rgba(95, 158, 160, .4);
     border-radius: 20px;
     margin: 6px;
-    opacity: 0.8;
+    opacity: 0.3;
     padding: 6px
 }
 
