@@ -1,0 +1,36 @@
+.sk-action-button {
+    margin-bottom: 6px;
+    padding: 6px;
+}
+
+.answer {
+    color: inherit;
+    font-weight: inherit;
+    font-size: large;
+    padding: 4px;
+}
+
+.correctAnswer {
+    color: #a94442;
+    font-size: large;
+    font-weight: bolder;
+    padding: 4px;
+}
+
+.groupTitle {
+    font-size: small;
+    font-weight: lighter;
+    padding: 4px;
+}
+
+.question {
+    font-size: large;
+    font-weight: bold;
+    padding: 6px;
+}
+
+.subElementTitle {
+    font-size: medium;
+    font-weight: lighter;
+    padding: 4px;
+}

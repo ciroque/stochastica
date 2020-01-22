@@ -24,7 +24,7 @@ WORKDIR /opt/app/stochastica
 RUN mix phx.digest
 
 RUN mkdir -p /opt/app/built && \
-    MIX_ENV=prod mix distillery.release --env=prod && \
+    MIX_ENV=prod mix release --env=prod && \
     cp _build/prod/rel/stochastica/releases/0.1.0/stochastica.tar.gz /opt/app/built
 
 ## Now, build the actual release image

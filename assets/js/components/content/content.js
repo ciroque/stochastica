@@ -5,11 +5,16 @@ import Lexemes from "../lexemes/lexemes";
 import Palette from "../palette/palette";
 import XkcdPassword from "../xkcdPassword/xkcdPassword";
 import ListManager from "../kismet/listManager/ListManager";
+import FccHamExam from "../fccHamExam/FccHamExam";
 
 const Content = (props) => {
     return (
         <div className='content card'>
             <Switch>
+                <Route
+                    path="/fccHamExam"
+                    component={FccHamExam}
+                />
                 <Route
                     path="/xkcdPassword"
                     component={XkcdPassword}
