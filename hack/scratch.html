@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scratch Pad</title>
+
+    <script>
+
+        function handleOnLoad() {
+            const opaque = 0xFF;
+            const white = 0xFF;
+            const black = 0x00;
+            const canvas = document.getElementById('screen');
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            const context = canvas.getContext('2d');
+            const imageData = context.getImageData(0, 0, width, height);
+
+            const randomize = function() {
+                for (var y = 0; y < height; y++) {
+                    let c = [];
+                    for (var x = 0; x < width; x++) {
+                        let index = (y * width + x) * 4;
+                        const color = Math.random() >= 0.5 ? white : black;
+                        imageData.data[index] = color;
+                        imageData.data[++index] = color;
+                        imageData.data[++index] = color;
+                        imageData.data[++index] = opaque;
+                    }
+                }
+                context.putImageData(imageData, 0, 0);
+            };
+
+            window.setInterval(randomize, 20);
+        }
+    </script>
+
+</head>
+<body onload="handleOnLoad()">
+    <canvas width="900" height="600" id="screen"></canvas>
+</body>
+</html>
