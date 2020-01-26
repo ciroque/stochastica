@@ -51,7 +51,9 @@ export default class AntWars extends React.Component {
 
     render = () => {
         return (
-            <div><canvas
+            <div>
+                <h3>Inspired by my son, Christopher.</h3>
+                <canvas
                 width="900"
                 height="600"
                 id={this.canvasId}/></div>
