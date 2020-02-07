@@ -5,38 +5,121 @@
     <title>Scratch Pad</title>
 
     <script>
+        const opaque = 0xFF;
+
+        const north  = (dimensions) => (point) =>  {
+            return {x: point.x, y: point.y - 1 };
+        };
+
+        const south = (dimensions) => (point) => {
+            return {x: point.x, y: point.y + 1};
+        };
+
+        const east = (dimensions) => (point) => {
+            return {x: point.x + 1, y: point.y};
+        };
+
+        const west = (dimensions) => (point) => {
+            return {x: point.x - 1, y: point.y};
+        };
+
+        const northwest = (dimensions) => (point) => {
+            return {x: point.x - 1, y: point.y - 1};
+        };
+
+        const northeast  = (dimensions) => (point) => {
+            return {x: point.x + 1, y: point.y - 1}
+        };
+
+        const southeast = (dimensions) => (point) => {
+            return {x: point.x + 1, y: point.y + 1};
+        };
+
+        const southwest = (dimensions) => (point) => {
+            return {x: point.x - 1, y: point.y + 1};
+        };
+
+        function getDirections(dimensions) {
+            return [
+                southwest(dimensions),
+                south(dimensions),
+                northwest(dimensions),
+                southeast(dimensions),
+                northeast(dimensions),
+                east(dimensions),
+                west(dimensions),
+                north(dimensions)
+            ];
+        }
+
+        function checkBounds(dimensions, point) {
+            if(point.y < 0) {
+                point.y = dimensions.h;
+            } else if(point.y > dimensions.h) {
+                point.y = 0;
+            }
+
+            if(point.x < 0) {
+                point.x = dimensions.w;
+            } else if(point.x > dimensions.w) {
+                point.x = 0;
+            }
+
+            return point;
+        }
+
+        function getCanvasInfo() {
+            const canvas = document.getElementById('screen');
+            const context = canvas.getContext('2d');
+            return {
+                canvas: canvas,
+                dimensions: {w: canvas.offsetWidth, h: canvas.offsetHeight },
+                context: context
+            };
+        }
+
+        function getRandomStartPosition(dimensions) {
+            const randomizer = function(max) { return parseInt(Math.random() * max)};
+            return { x: randomizer(dimensions.w), y: randomizer(dimensions.h) };
+        }
+
+        function renderPixel(canvasInfo, point) {
+            let index = (point.y * canvasInfo.dimensions.w + point.x) * 4;
+            const imageData = canvasInfo.context.getImageData(0, 0, canvasInfo.dimensions.w, canvasInfo.dimensions.h);
+            imageData.data[index] = 0xFF;
+            imageData.data[++index] = 0x00;
+            imageData.data[++index] = 0x00;
+            imageData.data[++index] = opaque;
+            canvasInfo.context.putImageData(imageData, 0, 0);
+        }
+
+        function run(canvasInfo, directions, point) {
+            renderPixel(canvasInfo, point);
+            const moveDirection = Math.floor(Math.random() * Math.floor(directions.length));
+            const next = checkBounds(canvasInfo.dimensions, directions[moveDirection](point));
+            setTimeout(() => run(canvasInfo, directions, next));
+        }
 
         function handleOnLoad() {
-            const opaque = 0xFF;
-            const white = 0xFF;
-            const black = 0x00;
-            const canvas = document.getElementById('screen');
-            const width = canvas.offsetWidth;
-            const height = canvas.offsetHeight;
-            const context = canvas.getContext('2d');
-            const imageData = context.getImageData(0, 0, width, height);
+            const canvasInfo = getCanvasInfo();
+            const directions = getDirections(canvasInfo.dimensions);
 
-            const randomize = function() {
-                for (var y = 0; y < height; y++) {
-                    let c = [];
-                    for (var x = 0; x < width; x++) {
-                        let index = (y * width + x) * 4;
-                        const color = Math.random() >= 0.5 ? white : black;
-                        imageData.data[index] = color;
-                        imageData.data[++index] = color;
-                        imageData.data[++index] = color;
-                        imageData.data[++index] = opaque;
-                    }
-                }
-                context.putImageData(imageData, 0, 0);
-            };
-
-            window.setInterval(randomize, 20);
+            for(var i = 0; i < 2; i++) {
+                run(canvasInfo, directions, getRandomStartPosition(canvasInfo.dimensions));
+            }
+            //
+            // const startPos = getRandomStartPosition(canvasInfo.dimensions);
+            // const startPos2 = getRandomStartPosition(canvasInfo.dimensions);
+            // const startPos3 = getRandomStartPosition(canvasInfo.dimensions);
+            //
+            // run(canvasInfo, directions, startPos);
+            // run(canvasInfo, directions, startPos2);
+            // run(canvasInfo, directions, startPos3);
         }
     </script>
 
 </head>
 <body onload="handleOnLoad()">
-    <canvas width="900" height="600" id="screen"></canvas>
+    <canvas width="800" height="800" id="screen" style="border: solid 1px silver"></canvas>
 </body>
 </html>
