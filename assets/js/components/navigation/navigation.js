@@ -10,7 +10,7 @@ const Navigation = (props) => {
             <div><Link to='/lexemes'>Lexemes</Link></div>
             <div><Link to='/xkcdPassword'>xkcd Password</Link></div>
             <div><Link to='/fccHamExam'>FCC HAM Exam</Link></div>
-            <div><Link to='/antWars'>Ant Wars!</Link></div>
+            <div><Link to='/offAir'>Off Air</Link></div>
         </div>
     );
 };

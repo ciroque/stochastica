@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default class AntWars extends React.Component {
-    canvasId = 'antWarsCanvas';
+export default class OffAir extends React.Component {
+    canvasId = 'offAirCanvas';
     opaque = 0xFF;
     white = 0xFF;
     black = 0x00;

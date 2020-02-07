@@ -6,15 +6,15 @@ import Palette from "../palette/palette";
 import XkcdPassword from "../xkcdPassword/xkcdPassword";
 import ListManager from "../kismet/listManager/ListManager";
 import FccHamExam from "../fccHamExam/FccHamExam";
-import AntWars from "../antWars/antWars";
+import OffAir from "../offAir/offAir";
 
 const Content = (props) => {
     return (
         <div className='content card'>
             <Switch>
                 <Route
-                    path="/antWars"
-                    component={AntWars}
+                    path="/offAir"
+                    component={OffAir}
                 />
                 <Route
                     path="/fccHamExam"
