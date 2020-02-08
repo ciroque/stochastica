@@ -5,54 +5,47 @@
     <title>Scratch Pad</title>
 
     <script>
+        const pathLength = 100;
+        const antCount = 27;
         const opaque = 0xFF;
 
-        const north  = (dimensions) => (point) =>  {
+        const north  = (point) =>  {
             return {x: point.x, y: point.y - 1 };
         };
 
-        const south = (dimensions) => (point) => {
+        const south = (point) => {
             return {x: point.x, y: point.y + 1};
         };
 
-        const east = (dimensions) => (point) => {
+        const east = (point) => {
             return {x: point.x + 1, y: point.y};
         };
 
-        const west = (dimensions) => (point) => {
+        const west = (point) => {
             return {x: point.x - 1, y: point.y};
         };
 
-        const northwest = (dimensions) => (point) => {
+        const northwest = (point) => {
             return {x: point.x - 1, y: point.y - 1};
         };
 
-        const northeast  = (dimensions) => (point) => {
+        const northeast  = (point) => {
             return {x: point.x + 1, y: point.y - 1}
         };
 
-        const southeast = (dimensions) => (point) => {
+        const southeast = (point) => {
             return {x: point.x + 1, y: point.y + 1};
         };
 
-        const southwest = (dimensions) => (point) => {
+        const southwest = (point) => {
             return {x: point.x - 1, y: point.y + 1};
         };
 
-        function getDirections(dimensions) {
-            return [
-                southwest(dimensions),
-                south(dimensions),
-                northwest(dimensions),
-                southeast(dimensions),
-                northeast(dimensions),
-                east(dimensions),
-                west(dimensions),
-                north(dimensions)
-            ];
-        }
+        const getDirections = () => {
+            return [ southwest, south, northwest, southeast, northeast, east, west, north ];
+        };
 
-        function checkBounds(dimensions, point) {
+        const checkBounds = (dimensions, point) => {
             if(point.y < 0) {
                 point.y = dimensions.h;
             } else if(point.y > dimensions.h) {
@@ -66,9 +59,9 @@
             }
 
             return point;
-        }
+        };
 
-        function getCanvasInfo() {
+        const getCanvasInfo = () => {
             const canvas = document.getElementById('screen');
             const context = canvas.getContext('2d');
             return {
@@ -76,50 +69,110 @@
                 dimensions: {w: canvas.offsetWidth, h: canvas.offsetHeight },
                 context: context
             };
-        }
+        };
 
-        function getRandomStartPosition(dimensions) {
-            const randomizer = function(max) { return parseInt(Math.random() * max)};
+        const getRandomStartPosition = (dimensions) => {
+            const randomizer = function(max) { return Math.floor(Math.random() * Math.floor(max))};
             return { x: randomizer(dimensions.w), y: randomizer(dimensions.h) };
-        }
+        };
 
-        function renderPixel(canvasInfo, point) {
-            let index = (point.y * canvasInfo.dimensions.w + point.x) * 4;
+        const greenValue = (c) => (c >> 16) & 0xFF;
+        const blueValue = (c) => (c >> 8) & 0xFF;
+        const redValue = (c) => (c >> 24) & 0xFF;
+        const opacityValue = (c) => (c >> 32) & 0xFF;
+
+        const renderPixel = (canvasInfo, ant) => {
+            let index = (ant.position.y * canvasInfo.dimensions.w + ant.position.x) * 4;
             const imageData = canvasInfo.context.getImageData(0, 0, canvasInfo.dimensions.w, canvasInfo.dimensions.h);
-            imageData.data[index] = 0xFF;
-            imageData.data[++index] = 0x00;
-            imageData.data[++index] = 0x00;
-            imageData.data[++index] = opaque;
+            imageData.data[index] = redValue(ant.color);
+            imageData.data[++index] = greenValue(ant.color);
+            imageData.data[++index] = blueValue(ant.color);
+            imageData.data[++index] = opacityValue(ant.color);
             canvasInfo.context.putImageData(imageData, 0, 0);
+        };
+
+        class Ant {
+            color = 0x0000FFFF;
+            moveCount = 0;
+            path = new Path(pathLength);
+            constructor(id, start) {
+                this.id = id;
+                this.position = start;
+
+            }
+            draw = (canvasInfo) => renderPixel(canvasInfo, this);
+            moveTo = (point) => {
+                this.position = point;
+                this.moveCount++;
+                this.path.add(point);
+            }
         }
 
-        function run(canvasInfo, directions, point) {
-            renderPixel(canvasInfo, point);
-            const moveDirection = Math.floor(Math.random() * Math.floor(directions.length));
-            const next = checkBounds(canvasInfo.dimensions, directions[moveDirection](point));
-            setTimeout(() => run(canvasInfo, directions, next));
+        class Path {
+            constructor(max) {
+                this.paths = [];
+                this.max = max;
+            }
+            add = (value) => {
+                if(this.paths.length > this.max) {
+                    this.paths.shift();
+                }
+                this.paths.push(value);
+            };
+            clear = (index) => this.paths = [];
+            exists = (value) => this.paths.some((v) => v.x === value.x && v.y === value.y);
+            moves = (index) => this.paths.length;
         }
 
-        function handleOnLoad() {
+        const randomColor = () => {
+            const r = Math.floor(Math.random() * Math.floor(255));
+            const g = Math.floor(Math.random() * Math.floor(255));
+            const b = Math.floor(Math.random() * Math.floor(255));
+            const o = Math.floor(Math.random() * Math.floor(255));
+            return (r << 24) + (g << 16) + (b << 8) + (o << 32);
+        };
+
+        const run = (canvasInfo, directions, ant) => {
+            var moveDirection = Math.floor(Math.random() * Math.floor(directions.length));
+            var next = checkBounds(canvasInfo.dimensions, directions[moveDirection](ant.position));
+            ant.moveTo(next);
+            if((ant.moveCount % 50) == 0) {
+                ant.color = randomColor();
+            }
+            ant.draw(canvasInfo);
+            // Interesting, this causes the ant to get stuck and cause a massive slow down trying to escape
+            // if(true) {
+            //     while(histories.exists(id, next)) {
+            //         console.warn(`${id} REVISITING ${next}`);
+            //         moveDirection = Math.floor(Math.random() * Math.floor(directions.length));
+            //         next = checkBounds(canvasInfo.dimensions, directions[moveDirection](point));
+            //     }
+            // }
+
+            // histories.add(id, next);
+            // if(histories.steps(id) > 50) {
+            //     // console.warn(`resetting start position for ${id}`);
+            //     histories.clear(id);
+            //     next = getRandomStartPosition(canvasInfo.dimensions);
+            // }
+
+            // console.warn(histories.buffer[id].length);
+            setTimeout(() => run(canvasInfo, directions, ant));
+        };
+
+        const main = () => {
             const canvasInfo = getCanvasInfo();
             const directions = getDirections(canvasInfo.dimensions);
-
-            for(var i = 0; i < 2; i++) {
-                run(canvasInfo, directions, getRandomStartPosition(canvasInfo.dimensions));
+            for(var i = 0; i < antCount; i++) {
+                const start = getRandomStartPosition(canvasInfo.dimensions);
+                const ant = new Ant(i, start);
+                run(canvasInfo, directions, ant);
             }
-            //
-            // const startPos = getRandomStartPosition(canvasInfo.dimensions);
-            // const startPos2 = getRandomStartPosition(canvasInfo.dimensions);
-            // const startPos3 = getRandomStartPosition(canvasInfo.dimensions);
-            //
-            // run(canvasInfo, directions, startPos);
-            // run(canvasInfo, directions, startPos2);
-            // run(canvasInfo, directions, startPos3);
-        }
+        };
     </script>
 
 </head>
-<body onload="handleOnLoad()">
-    <canvas width="800" height="800" id="screen" style="border: solid 1px silver"></canvas>
+<body onload="main()">
+    <canvas width="120" height="120" id="screen" style="border: solid 1px silver"></canvas>
 </body>
 </html>
