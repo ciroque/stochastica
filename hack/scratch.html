@@ -136,7 +136,7 @@
             var moveDirection = Math.floor(Math.random() * Math.floor(directions.length));
             var next = checkBounds(canvasInfo.dimensions, directions[moveDirection](ant.position));
             ant.moveTo(next);
-            if((ant.moveCount % 50) == 0) {
+            if((ant.moveCount % 50) === 0) {
                 ant.color = randomColor();
             }
             ant.draw(canvasInfo);
