@@ -6,7 +6,7 @@
 
     <script>
         const pathLength = 100;
-        const antCount = 27;
+        const antCount = 3;
         const opaque = 0xFF;
 
         const north  = (point) =>  {
@@ -79,7 +79,7 @@
         const greenValue = (c) => (c >> 16) & 0xFF;
         const blueValue = (c) => (c >> 8) & 0xFF;
         const redValue = (c) => (c >> 24) & 0xFF;
-        const opacityValue = (c) => (c >> 32) & 0xFF;
+        const opacityValue = (c) => (c >> 0) & 0xFF;
 
         const renderPixel = (canvasInfo, ant) => {
             let index = (ant.position.y * canvasInfo.dimensions.w + ant.position.x) * 4;
@@ -173,6 +173,6 @@
 
 </head>
 <body onload="main()">
-    <canvas width="120" height="120" id="screen" style="border: solid 1px silver"></canvas>
+    <canvas width="800" height="800" id="screen" style="border: solid 1px silver"></canvas>
 </body>
 </html>
