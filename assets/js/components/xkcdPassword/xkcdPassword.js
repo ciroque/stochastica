@@ -2,9 +2,15 @@ import React from 'react';
 import './xkcdPassword.css';
 
 export default class XkcdPassword extends React.Component {
+    styles = {
+        historical: {
+            padding: "6px"
+        }
+    }
+
     constructor(props) {
         super(props);
-        this.state = { words: [] };
+        this.state = { words: [], history: [] };
     }
 
     handleClick = () => {
@@ -14,7 +20,9 @@ export default class XkcdPassword extends React.Component {
         fetch(url)
             .then(r => r.json())
             .then(json => {
-               this.setState({words: json.data.words});
+                const hist = this.state.history;
+                hist.unshift(json.data.words.join(''));
+                this.setState({words: json.data.words, history: hist});
                button.disabled = false;
             })
             .catch(e => {
@@ -30,6 +38,11 @@ export default class XkcdPassword extends React.Component {
             <span className="words">{this.state.words[1]}</span>
             <span className="words">{this.state.words[2]}</span>
             <span className="words">{this.state.words[3]}</span>
+            <div>
+                <ol>
+                    {this.state.history.map(item => <li className={this.styles.historical} key={item}>{item}</li>)}
+                </ol>
+            </div>
         </div>);
     }
 }
